@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Anh.DB_definition_diagram__WRS
+namespace Anh.DB定義図＿WRS
 {
     static class Program
     {
@@ -16,8 +16,7 @@ namespace Anh.DB_definition_diagram__WRS
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new TranslateWorkBook());
-            Application.Run(new TranslateWorkBook2());
+            Application.Run(new DB定義図＿WRSMap());
         }
     }
 }

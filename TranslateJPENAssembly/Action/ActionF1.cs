@@ -330,10 +330,15 @@ namespace Anh.Translate
                         {
                             string[] rowppT = j_0_0.Split(new string[] { "\n" }, StringSplitOptions.None);
                             string[] rowpp = new string[rowppT.Length > 1 ? rowppT.Length - 1: rowppT.Length];
-                            rowpp[0] = (rowppT[0] == "." ? null : rowppT[0]);
+                            rowpp[0] = (rowppT[0] == "..." ? null : rowppT[0]);
                             if (sb.Length > 0)
                             {
                              rowpp[0] = sb.ToString() + rowpp[0];
+								//when first line is blank, tip: insert 「。。。」, than after translated return value = [. . .]
+								if (rowpp[0]== ". . .")
+								{
+									rowpp[0] = null;
+								}
                             }
                             li.AddRange(rowpp);
                             sb.Clear();
@@ -343,24 +348,27 @@ namespace Anh.Translate
 
                 }
             }
-            JToken spell = j_0[iLen-1];
-            if (spell[3]!=null)
-            {
-                string[] rowpp = spell[3].ToString().Split(new string[] { "."}, StringSplitOptions.RemoveEmptyEntries);
-                int k = 0;
-                for (int i = 0; i < li.Count; i++)
-                {
-                    if (li[i]==null)
-                    {
-                        continue;
-                    }
-                    if (k < rowpp.Length)
-                    {
-                        li[i] = li[i] + "\n" + rowpp[k];
-                        k++;
-                    }
-                }
-            }
+			if (_bOutputPronunciation)
+			{
+				JToken spell = j_0[iLen-1];
+				if (spell[3]!=null)
+				{
+					string[] rowpp = spell[3].ToString().Split(new string[] { "..."}, StringSplitOptions.RemoveEmptyEntries);
+					int k = 0;
+					for (int i = 0; i < li.Count; i++)
+					{
+						if (li[i]==null)
+						{
+							continue;
+						}
+						if (k < rowpp.Length)
+						{
+							li[i] = li[i] + "\n" + rowpp[k];
+							k++;
+						}
+					}
+				}
+			}
             return li;
         }
     }
