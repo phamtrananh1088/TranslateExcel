@@ -84,6 +84,46 @@ namespace Anh.Translate
 			return jj;
 		}
 
+		/// <summary>
+		/// Voice text
+		/// </summary>
+		/// <param name="q"></param>
+		/// <param name="tl"></param>
+		/// <returns></returns>
+		public async Task<byte[]> Translate_tts(string q, string tl = "ja")
+		{
+			string tk = ActionF1.GetTk(q);
+			var iTextLen = q.Length;
+			string encodeQ = Uri.EscapeDataString(q);
+			byte[] res = null;
+			HttpResponseMessage response = null;
+			try
+			{
+				using (var client = new HttpClient())
+				{
+					client.BaseAddress = new Uri(ActionBase.UrlTranslateGoogleWebAPI);
+					HttpRequestHeaders reqH = client.DefaultRequestHeaders;
+					Authen(ref reqH);
+					reqH.Add(HttpRequestHeader.Cookie.ToString(), "NID=188=" + RenCookie());
+					string pathH = "/translate_tts?ie=UTF-8&q={0}&tl={1}&total=1&idx=0&textlen={2}{3}&client=webapp&prev=input";
+					string path = string.Format(pathH, encodeQ, tl, iTextLen, tk);
+					response = await client.GetAsync(path);
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.Fail("エラー: {0}", ex.ToString());
+			}
+			finally
+			{
+			}
+			if (response.IsSuccessStatusCode)
+			{
+				res = await response.Content.ReadAsByteArrayAsync();
+			}
+			return res;
+		}
+
 		public string RenCookie()
 		{
 			Random r = new Random();

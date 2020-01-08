@@ -136,34 +136,38 @@ namespace Anh.Translate
                  for (es = new List<long>(), f = 0, g = 0; g < a.Length; g++)
                  {
                      long h = Convert.ToInt64(a[g]);
-                     if (128 > h)
-                     {
-                         es.Add(h);
-                         f++;
-                     }
-                     else if (2048 > h)
-                     {
-                         es.Add(h >> 6 | 192);
+					 if (128 > h)
+					 {
+						 es.Add(h);
 						 f++;
-                     }
-                     else if (55296 == (h & 64512) && g + 1 < a.Length && 56320 == (Convert.ToInt64(a[g + 1]) & 64512))
-                     {
-                         h = 65536 + ((h & 1023) << 10) + Convert.ToInt64(a[++g]) & 1023;
-                         es.Add(h >> 18 | 240);
-                         f++;
-                         es.Add(h >> 12 & 63 | 128);
-                         f++;
-                     }
-                     else
-                     {
-                         es.Add(h >> 12 | 224);
-                         f++;
-                         es.Add(h >> 6 & 63 | 128);
-                         f++;
-                         es.Add(h & 63 | 128);
-                         f++;
-                     }
-                 }
+					 }
+					 else
+					 {
+						 if (2048 > h)
+						 {
+							 es.Add(h >> 6 | 192);
+							 f++;
+						 }
+						 else if (55296 == (h & 64512) && g + 1 < a.Length && 56320 == (Convert.ToInt64(a[g + 1]) & 64512))
+						 {
+							 h = 65536 + ((h & 1023) << 10) + Convert.ToInt64(a[++g]) & 1023;
+							 es.Add(h >> 18 | 240);
+							 f++;
+							 es.Add(h >> 12 & 63 | 128);
+							 f++;
+						 }
+						 else
+						 {
+							 es.Add(h >> 12 | 224);
+							 f++;
+							 es.Add(h >> 6 & 63 | 128);
+							 f++;
+						 }
+
+						 es.Add(h & 63 | 128);
+						 f++;
+					 }
+				 }
                  long na = nb;
                  for (f = 0; f < es.Count; f++)
                  {
@@ -187,7 +191,93 @@ namespace Anh.Translate
                  na %= 1000000;
                  return c + (na.ToString() + "." + (na ^ nb));
              };
-            res = wo(transateText);
+
+			Func<string, string> Eo = (a) =>
+			{
+				string b, c;
+				string[] bb = new string[2];
+				if (vo != null)
+				{
+					b = vo;
+				}
+				else
+				{
+					b = sc(84);
+					c = sc(75);
+					bb[0] = bb[1] = b;
+					bb[1] = c;
+					b = vo = tkk(string.Join(c, bb)) ?? "";
+				}
+				string d = sc(116);
+				c = sc(107);
+				string[] dd = new string[2];
+				dd[0] = dd[1] = d;
+				dd[1] = c;
+				c = "&" + string.Join("", dd) + "=";
+				dd = b.Split(new char[] { '.' });
+				long nb = 0;
+				if (!long.TryParse(dd[0], out nb))
+				{
+					nb = 0;
+				}
+				List<long> es;
+				int f;
+				int g;
+				for (es = new List<long>(), f = 0, g = 0; g < a.Length; g++)
+				{
+					long h = Convert.ToInt64(a[g]);
+					if (128 > h)
+					{
+						es.Add(h);
+						f++;
+					}
+					else if (2048 > h)
+					{
+						es.Add(h >> 6 | 192);
+						f++;
+					}
+					else if (55296 == (h & 64512) && g + 1 < a.Length && 56320 == (Convert.ToInt64(a[g + 1]) & 64512))
+					{
+						h = 65536 + ((h & 1023) << 10) + Convert.ToInt64(a[++g]) & 1023;
+						es.Add(h >> 18 | 240);
+						f++;
+						es.Add(h >> 12 & 63 | 128);
+						f++;
+					}
+					else
+					{
+						es.Add(h >> 12 | 224);
+						f++;
+						es.Add(h >> 6 & 63 | 128);
+						f++;
+						es.Add(h & 63 | 128);
+						f++;
+					}
+				}
+				long na = nb;
+				for (f = 0; f < es.Count; f++)
+				{
+					na += es[f];
+					na = uo(na, "+-a^+6");
+				}
+				na = uo(na, "+-3^+b+-f");
+				long oa = 0;
+				if (long.TryParse(dd[1], out oa))
+				{
+					na ^= oa;
+				}
+				else
+				{
+					na = 0;
+				}
+				if (0 > na)
+				{
+					na = (na & 2147483647) + 2147483648;
+				}
+				na %= 1000000;
+				return c + (na.ToString() + "." + (na ^ nb));
+			};
+			res = wo(transateText);
             return res;
         }
     }
