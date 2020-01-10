@@ -13,6 +13,7 @@ using System.IO;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 using System.Resources;
+using System.Diagnostics;
 
 namespace Anh.音声
 {
@@ -42,15 +43,12 @@ namespace Anh.音声
 				string sFileNameTarget = txtExcelName.Text;
 				IWorkbook xlBookTarget = SpreadsheetGear.Factory.GetWorkbook(sFileNameTarget);
 				string xlXheetNm = cbSheetName.SelectedItem.ToString();
-				byte[] arrayData = await ConvertSheet(xlBookTarget.Worksheets[xlXheetNm]);
-
-				string sFilePath = Path.GetDirectoryName(txtExcelName.Text) + @"\" + Path.GetFileNameWithoutExtension(sFileNameTarget) + "_" + DateTime.Now.ToString("yyyyMMdd") + ".mp3";
-
-				using (BinaryWriter w = new BinaryWriter(File.Open(sFilePath, FileMode.Create)))
+				bool res = await ConvertSheet(xlBookTarget.Worksheets[xlXheetNm]);
+				if (res)
 				{
-					w.Write(arrayData);
+					MessageBox.Show("Finished");
+					ExecuteCommand();
 				}
-				MessageBox.Show("Finished");
 			}
 			catch (Exception ex)
 			{
@@ -59,25 +57,64 @@ namespace Anh.音声
 
 		}
 
+		public void ExecuteCommand()
+		{
+			ProcessStartInfo ProcessInfo = new ProcessStartInfo(Application.StartupPath + @"\AudioOut\createAudio.bat");
+			ProcessInfo.WorkingDirectory = Application.StartupPath + @"\AudioOut";
+			Process.Start(ProcessInfo);
+		}
 
 		#region "音声"
-		private async Task<byte[]> ConvertSheet(IWorksheet xlSheet)
+		private async Task<bool> ConvertSheet(IWorksheet xlSheet)
 		{
 			Tuple<string, string> lang = GetHeaderSheet(xlSheet);
 			List<Tuple<string, string>> listPair = ExtractDataSheet(xlSheet);
 			var trans = new Anh.Translate.ActionF1();
 			List<byte> l = new List<byte>();
-			
+			int i = 1;
+			string folder = Application.StartupPath + @"\AudioOut\";
+			if (Directory.Exists(folder))
+			{
+				foreach (var file in Directory.EnumerateFiles(folder))
+				{
+					FileInfo fi = new FileInfo(file);
+					if (fi.Extension.Equals(".mp3"))
+					{
+						if (fi.Name == "the_next_word.mp3" || fi.Name == "wait_a_minute.mp3")
+							continue;
+						fi.Delete();
+					}
+				}
+			}
+			StringBuilder sb = new StringBuilder();
 			foreach (var item in listPair)
 			{
 				byte[] b1 = await trans.Translate_tts(item.Item1, lang.Item1);
 				l.AddRange(b1);
-				l.AddRange(Properties.Resources.ええと);
+				string fileName = "A" + i + ".mp3";
+				string sFilePath = folder + fileName;
+				sb.AppendLine(string.Format("file '{0}'", fileName));
+				sb.AppendLine("file 'wait_a_minute.mp3'");
+				using (BinaryWriter w = new BinaryWriter(File.Open(sFilePath, FileMode.Create)))
+				{
+					w.Write(b1);
+				}
+				fileName = "B" + i + ".mp3";
+				sFilePath = folder + fileName;
+				sb.AppendLine(string.Format("file '{0}'", fileName));
+				sb.AppendLine("file 'the_next_word.mp3'");
 				byte[] b2 = await trans.Translate_tts(item.Item2, lang.Item2);
-				l.AddRange(b2);
-				l.AddRange(Properties.Resources.など);
+				using (BinaryWriter w = new BinaryWriter(File.Open(sFilePath, FileMode.Create)))
+				{
+					w.Write(b2);
+				}
+				i++;
 			}
-			return l.ToArray();
+			using (StreamWriter w = new StreamWriter(folder + @"\audio.txt"))
+			{
+				w.Write(sb.ToString());
+			}
+			return true;
 		}
 
 		private Tuple<string, string> GetHeaderSheet(IWorksheet xlSheet)
@@ -90,7 +127,7 @@ namespace Anh.音声
 		{
 			List<Tuple<string, string>> listPair = new List<Tuple<string, string>>();
 			IRange rMax = xlSheet.UsedRange;
-			for (int j = 1; j < Math.Min(rMax.Rows.RowCount,100); j++)
+			for (int j = 1; j < Math.Min(rMax.Rows.RowCount, 100); j++)
 			{
 				listPair.Add(new Tuple<string, string>(rMax.Cells[j, 0].Text.Trim(), rMax.Cells[j, 1].Text.Trim()));
 				//break;
