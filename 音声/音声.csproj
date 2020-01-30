@@ -64,6 +64,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="mazii.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mazii.Designer.cs">
+      <DependentUpon>mazii.cs</DependentUpon>
+    </Compile>
     <Compile Include="音声.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -76,6 +82,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mazii.resx">
+      <DependentUpon>mazii.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="音声.resx">
       <DependentUpon>音声.cs</DependentUpon>

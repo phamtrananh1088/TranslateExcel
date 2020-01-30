@@ -16,7 +16,8 @@ namespace Anh.音声
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new 音声());
+            //Application.Run(new 音声());
+            Application.Run(new mazii());
         }
     }
 }
