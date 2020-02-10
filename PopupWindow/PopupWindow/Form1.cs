@@ -79,6 +79,8 @@ namespace PopupWindow
         {
             popup = new MPopupNotifier();
             popup.TitleText = "BE HAPPY";
+            popup.Delay = 500000;
+            popup.OptionsMenu = contextMenuStrip1;
             timer1.Start();
         }
 
@@ -86,10 +88,7 @@ namespace PopupWindow
         {
             if (li.Count > 0)
             {
-                if (index == li.Count)
-                {
-                    index = 0;
-                }
+                if (index < 0 || index >= li.Count) index = 0;
                 popup.ContentText = li[index];
                 index++;
             }
@@ -97,7 +96,7 @@ namespace PopupWindow
             {
                 popup.ContentText = "Thank you" + DateTime.Now.ToLongTimeString();
             }
-            popup.Popup();// show  
+            popup.Popup();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -114,6 +113,7 @@ namespace PopupWindow
         private void btnStart_Click(object sender, EventArgs e)
         {
             timer1.Interval = (int)numericUpDown1.Value;
+            timer1.Stop();
             timer1.Start();
         }
 
@@ -145,20 +145,50 @@ namespace PopupWindow
         private void btnBack_Click(object sender, EventArgs e)
         {
             index--;
-            if (index < 0)
-            {
-                index = 0;
-            }
+            index--;
+            timer1.Start();
         }
 
         private void btnLast_Click(object sender, EventArgs e)
         {
             index = li.Count - 1;
+            timer1.Start();
         }
 
         private void btnFisrt_Click(object sender, EventArgs e)
         {
             index = 0;
+            timer1.Start();
+        }
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnStop_Click(sender, null);
+        }
+
+        private void pauseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnPause_Click(sender, null);
+        }
+
+        private void fisrtToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnFisrt_Click(sender, null);
+        }
+
+        private void backToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnBack_Click(sender, null);
+        }
+
+        private void lastToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnLast_Click(sender, null);
+        }
+
+        private void startToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnStart_Click(sender, null);
         }
     }
 }

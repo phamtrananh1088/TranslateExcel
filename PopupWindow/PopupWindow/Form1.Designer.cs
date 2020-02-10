@@ -43,7 +43,16 @@
             this.btnBack = new System.Windows.Forms.Button();
             this.btnLast = new System.Windows.Forms.Button();
             this.btnFisrt = new System.Windows.Forms.Button();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fisrtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.backToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lastToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnStop
@@ -58,7 +67,7 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 5000;
+            this.timer1.Interval = 10000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // btnStart
@@ -73,9 +82,9 @@
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(79, 149);
+            this.numericUpDown1.Location = new System.Drawing.Point(61, 149);
             this.numericUpDown1.Maximum = new decimal(new int[] {
-            10000,
+            60000,
             0,
             0,
             0});
@@ -85,10 +94,10 @@
             0,
             0});
             this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(46, 19);
+            this.numericUpDown1.Size = new System.Drawing.Size(64, 19);
             this.numericUpDown1.TabIndex = 10;
             this.numericUpDown1.Value = new decimal(new int[] {
-            5000,
+            10000,
             0,
             0,
             0});
@@ -96,7 +105,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(30, 149);
+            this.label1.Location = new System.Drawing.Point(12, 149);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(43, 12);
             this.label1.TabIndex = 9;
@@ -186,6 +195,66 @@
             this.btnFisrt.UseVisualStyleBackColor = true;
             this.btnFisrt.Click += new System.EventHandler(this.btnFisrt_Click);
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.startToolStripMenuItem,
+            this.pauseToolStripMenuItem,
+            this.stopToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.fisrtToolStripMenuItem,
+            this.backToolStripMenuItem,
+            this.lastToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 164);
+            // 
+            // pauseToolStripMenuItem
+            // 
+            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
+            this.pauseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pauseToolStripMenuItem.Text = "Pause";
+            this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseToolStripMenuItem_Click);
+            // 
+            // stopToolStripMenuItem
+            // 
+            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.stopToolStripMenuItem.Text = "Stop";
+            this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
+            // 
+            // fisrtToolStripMenuItem
+            // 
+            this.fisrtToolStripMenuItem.Name = "fisrtToolStripMenuItem";
+            this.fisrtToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fisrtToolStripMenuItem.Text = "Fisrt";
+            this.fisrtToolStripMenuItem.Click += new System.EventHandler(this.fisrtToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            // 
+            // backToolStripMenuItem
+            // 
+            this.backToolStripMenuItem.Name = "backToolStripMenuItem";
+            this.backToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.backToolStripMenuItem.Text = "Back";
+            this.backToolStripMenuItem.Click += new System.EventHandler(this.backToolStripMenuItem_Click);
+            // 
+            // lastToolStripMenuItem
+            // 
+            this.lastToolStripMenuItem.Name = "lastToolStripMenuItem";
+            this.lastToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.lastToolStripMenuItem.Text = "Last";
+            this.lastToolStripMenuItem.Click += new System.EventHandler(this.lastToolStripMenuItem_Click);
+            // 
+            // startToolStripMenuItem
+            // 
+            this.startToolStripMenuItem.Name = "startToolStripMenuItem";
+            this.startToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.startToolStripMenuItem.Text = "Start";
+            this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -207,6 +276,7 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -228,6 +298,14 @@
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnLast;
         private System.Windows.Forms.Button btnFisrt;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fisrtToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem backToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem lastToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem startToolStripMenuItem;
     }
 }
 
