@@ -19,6 +19,8 @@ namespace Anh.音声
 {
 	public partial class 音声 : Form
 	{
+        public static readonly bool JoinWord = ConfigurationManager.AppSettings["JoinWord"] != null ? bool.Parse(ConfigurationManager.AppSettings["JoinWord"].ToString()) : false;
+        public static readonly bool JoinSentence = ConfigurationManager.AppSettings["JoinSentence"] != null ? bool.Parse(ConfigurationManager.AppSettings["JoinSentence"].ToString()) : false;
 		private bool _widthChange;
 		public 音声()
 		{
@@ -94,20 +96,23 @@ namespace Anh.音声
 				string fileName = "A" + i + ".mp3";
 				string sFilePath = folder + fileName;
 				sb.AppendLine(string.Format("file '{0}'", fileName));
-				sb.AppendLine("file 'wait_a_minute.mp3'");
+				if(JoinSentence) sb.AppendLine("file 'wait_a_minute.mp3'");
 				using (BinaryWriter w = new BinaryWriter(File.Open(sFilePath, FileMode.Create)))
 				{
 					w.Write(b1);
 				}
-				fileName = "B" + i + ".mp3";
-				sFilePath = folder + fileName;
-				sb.AppendLine(string.Format("file '{0}'", fileName));
-				sb.AppendLine("file 'the_next_word.mp3'");
-				byte[] b2 = await trans.Translate_tts(item.Item2, lang.Item2);
-				using (BinaryWriter w = new BinaryWriter(File.Open(sFilePath, FileMode.Create)))
-				{
-					w.Write(b2);
-				}
+                if (!string.IsNullOrEmpty(lang.Item2))
+                {
+				    fileName = "B" + i + ".mp3";
+				    sFilePath = folder + fileName;
+				    sb.AppendLine(string.Format("file '{0}'", fileName));
+				    if(JoinWord) sb.AppendLine("file 'the_next_word.mp3'");
+				    byte[] b2 = await trans.Translate_tts(item.Item2, lang.Item2);
+				    using (BinaryWriter w = new BinaryWriter(File.Open(sFilePath, FileMode.Create)))
+				    {
+					    w.Write(b2);
+				    }
+                }
 				i++;
 			}
 			using (StreamWriter w = new StreamWriter(folder + @"\audio.txt"))
