@@ -89,6 +89,21 @@
     <EmbeddedResource Include="音声.resx">
       <DependentUpon>音声.cs</DependentUpon>
     </EmbeddedResource>
+    <Content Include="AudioOut\blanksound0.1s.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AudioOut\blanksound0.2s.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AudioOut\blanksound0.3s.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AudioOut\blanksound0.5s.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AudioOut\blanksound1s.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="AudioOut\createAudio.bat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

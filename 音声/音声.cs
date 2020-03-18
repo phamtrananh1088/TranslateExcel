@@ -82,31 +82,62 @@ namespace Anh.音声
 					FileInfo fi = new FileInfo(file);
 					if (fi.Extension.Equals(".mp3"))
 					{
-						if (fi.Name == "the_next_word.mp3" || fi.Name == "wait_a_minute.mp3")
+						if (fi.Name == "the_next_word.mp3" || fi.Name == "wait_a_minute.mp3"
+                             || fi.Name == "blanksound0.1s.mp3" || fi.Name == "blanksound0.2s.mp3" || fi.Name == "blanksound0.3s.mp3" || fi.Name == "blanksound0.5s.mp3")
 							continue;
 						fi.Delete();
 					}
 				}
 			}
 			StringBuilder sb = new StringBuilder();
-			foreach (var item in listPair)
-			{
-				byte[] b1 = await trans.Translate_tts(item.Item1, lang.Item1);
-				l.AddRange(b1);
-				string fileName = "A" + i + ".mp3";
-				string sFilePath = folder + fileName;
-				sb.AppendLine(string.Format("file '{0}'", fileName));
-				if(JoinSentence) sb.AppendLine("file 'wait_a_minute.mp3'");
-				using (BinaryWriter w = new BinaryWriter(File.Open(sFilePath, FileMode.Create)))
-				{
-					w.Write(b1);
-				}
+            string fileName = "";
+            string sFilePath = "";
+            for (int im = 0; im < listPair.Count; im++)
+            {
+                var item = listPair[im];
+                if (i + 1 % 200 == 0) 
+                    Thread.Sleep((i + 1) * 10);
+                if (!string.IsNullOrEmpty(lang.Item1))
+                {
+				    byte[] b1 = await trans.Translate_tts(item.Item1, lang.Item1);
+				    l.AddRange(b1);
+				    fileName = "A" + i + ".mp3";
+				    sFilePath = folder + fileName;
+				    sb.AppendLine(string.Format("file '{0}'", fileName));
+                    if (JoinSentence)
+                    {
+                        if (im < listPair.Count - 1)
+                        {
+                            if (!string.IsNullOrEmpty(listPair[im+1].Item1))
+                            {
+                                string fc = listPair[im+1].Item1.Substring(0, 1);
+                                char a = fc.ToCharArray()[0];
+                                if (('A' <= a && a <= 'Z') || '0' <= a && a <= '9' || a =='Đ')
+                                {
+                                    sb.AppendLine("file 'blanksound0.2s.mp3'");
+                                }
+                                else
+                                {
+                                    //sb.AppendLine("file 'blanksound0.1s.mp3'");
+                                }
+                            }
+                            else
+                            {
+                                sb.AppendLine("file 'blanksound0.2s.mp3'");
+                            }
+                        }
+                    }
+				    using (BinaryWriter w = new BinaryWriter(File.Open(sFilePath, FileMode.Create)))
+				    {
+					    w.Write(b1);
+				    }
+                }
                 if (!string.IsNullOrEmpty(lang.Item2))
                 {
 				    fileName = "B" + i + ".mp3";
 				    sFilePath = folder + fileName;
 				    sb.AppendLine(string.Format("file '{0}'", fileName));
-				    if(JoinWord) sb.AppendLine("file 'the_next_word.mp3'");
+                    if (JoinWord) sb.AppendLine("file 'blanksound0.1s.mp3'");
 				    byte[] b2 = await trans.Translate_tts(item.Item2, lang.Item2);
 				    using (BinaryWriter w = new BinaryWriter(File.Open(sFilePath, FileMode.Create)))
 				    {
@@ -114,7 +145,7 @@ namespace Anh.音声
 				    }
                 }
 				i++;
-			}
+            }
 			using (StreamWriter w = new StreamWriter(folder + @"\audio.txt"))
 			{
 				w.Write(sb.ToString());
@@ -132,7 +163,7 @@ namespace Anh.音声
 		{
 			List<Tuple<string, string>> listPair = new List<Tuple<string, string>>();
 			IRange rMax = xlSheet.UsedRange;
-			for (int j = 1; j < Math.Min(rMax.Rows.RowCount, 100); j++)
+			for (int j = 1; j < rMax.Rows.RowCount; j++)
 			{
 				listPair.Add(new Tuple<string, string>(rMax.Cells[j, 0].Text.Trim(), rMax.Cells[j, 1].Text.Trim()));
 				//break;
