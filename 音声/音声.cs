@@ -89,9 +89,12 @@ namespace Anh.音声
 					}
 				}
 			}
-			StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sbB = new StringBuilder();
+            sbB.AppendLine("@ECHO OFF");
             string fileName = "";
             string sFilePath = "";
+            int stt = 0;
             for (int im = 0; im < listPair.Count; im++)
             {
                 var item = listPair[im];
@@ -99,6 +102,35 @@ namespace Anh.音声
                     Thread.Sleep((i + 1) * 10);
                 if (!string.IsNullOrEmpty(lang.Item1))
                 {
+                    if (item.Item1 == "<<^Break>>" || item.Item1 == "<<Break>>" || item.Item1 == "<<$Break>>")
+                    {
+                        stt++;
+                        switch (item.Item1)
+                        {
+                            case "<<^Break>>":
+                                sb.Clear();
+                                sbB.AppendLine(string.Format("ffmpeg -f concat -i audio{0}.txt -c copy {1}.mp3", stt, item.Item2));
+                                break;
+                            case "<<Break>>":
+                                using (StreamWriter w = new StreamWriter(folder +string.Format(@"\audio{0}.txt",stt-1)))
+                                {
+                                    w.Write(sb.ToString());
+                                }
+                                sb.Clear();
+                                sbB.AppendLine(string.Format("ffmpeg -f concat -i audio{0}.txt -c copy {1}.mp3", stt, item.Item2));
+                                break;
+                            case "<<$Break>>":
+                                using (StreamWriter w = new StreamWriter(folder +string.Format(@"\audio{0}.txt",stt-1)))
+                                {
+                                    w.Write(sb.ToString());
+                                }
+                                sb.Clear();
+                                break;
+                            default:
+                                break;
+                        }
+                        continue;
+                    }
 				    byte[] b1 = await trans.Translate_tts(item.Item1, lang.Item1);
 				    l.AddRange(b1);
 				    fileName = "A" + i + ".mp3";
@@ -150,6 +182,11 @@ namespace Anh.音声
 			{
 				w.Write(sb.ToString());
 			}
+            using(StreamWriter w = new StreamWriter(folder + @"\createAudio.bat")){
+                sbB.AppendLine("ECHO Congratulations! Your first batch file executed successfully.");
+                sbB.AppendLine("PAUSE");
+                w.Write(sbB.ToString());
+            }
 			return true;
 		}
 
