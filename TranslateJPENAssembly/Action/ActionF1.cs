@@ -374,8 +374,8 @@ namespace Anh.Translate
                             if (sb.Length > 0)
                             {
                              rowpp[0] = sb.ToString() + rowpp[0];
-								//when first line is blank, tip: insert 「。。。」, than after translated return value = [. . .]
-								if (rowpp[0]== ". . .")
+                             //when first line is blank, tip: insert 「。。。」, than after translated return value = [. . .] or [.. .. ..]
+								if (rowpp[0]== ". . ." || rowpp[0]==".. .. ..")
 								{
 									rowpp[0] = null;
 								}
@@ -411,5 +411,31 @@ namespace Anh.Translate
 			}
             return li;
         }
-    }
+
+		public List<string> ReadJArrayComon(JArray jj)
+		{
+			if (jj == null)
+			{
+				return null;
+			}
+			List<string> li = new List<string>();
+			JToken j_0 = jj[0];
+			int iLen = j_0.Count();
+			for (int i = 0; i < iLen; i++)
+			{
+				JToken item = j_0[i];
+				if (item != null)
+				{
+					if (item[0] != null)
+					{
+						string j_0_0 = item[0].ToString();
+						if (j_0_0.EndsWith("\n"))
+							j_0_0 = j_0_0.Substring(0, j_0_0.Length - 1);
+                        li.Add(j_0_0);
+					}
+				}
+			}
+			return li;
+		}
+	}
 }
