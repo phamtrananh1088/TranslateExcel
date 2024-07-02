@@ -140,13 +140,14 @@ namespace Anh.TranslateExcel
 				//JArray jarr = await FakeTrans(originalText);
 				//List<string> transateText = null;
 				////fake end
-				DataTable traTa = GetTableFromText(transateText, orgTa);
+				DataTable traTa = MergeResultIntoTable(transateText, orgTa);
 				//translate sucess
 				if (traTa != null)
 				{
-					for (int im = 1; im <= traTa.Rows.Count; im++)
+					for (int id = 0; id < traTa.Rows.Count; id++)
 					{
-						object vv = traTa.Rows[im-1][0];
+						var im = traTa.Rows[id][1].ToString().Split(',')[0];
+                        object vv = traTa.Rows[id][2];
 						//string[] speStart = new string[] {"\n", "「" , "\"","“",};
 						if (vv != null && vv.ToString().Trim().Length > 1)
 						//&& (System.Text.RegularExpressions.Regex.IsMatch(vv.ToString().Trim().Substring(0, 1), @"[a-zA-Z0-9]") || speStart.Contains(vv.ToString().Substring(0, 1))))
@@ -185,6 +186,22 @@ namespace Anh.TranslateExcel
 			return m;
 		}
 
+		private string ReplaceSpecialText(string text)
+		{
+			if (text.EndsWith("..."))
+			{
+				text = text.Trim('.');
+			}
+            if (text.Contains("No"))
+            {
+                text = text.Replace("No", "NO");
+            }
+            if (text.Contains("..."))
+            {
+                text = text.Replace("...", "_");
+            }
+			return text;
+        }
 		private string GetTextFromTable2(DataTable orgTa)
 		{
 			if (orgTa == null)
@@ -198,36 +215,21 @@ namespace Anh.TranslateExcel
 				DataRow r = orgTa.Rows[i];
 				if (r.IsNull(0) || r[0].ToString().Trim().Length == 0)
 				{
-					if (i == 0)
-					{
-						res = "。。。" + "\n";
-					}
-					else
-					{
+					//if (i == 0)
+					//{
+					//	res = "。。。" + "\n";
+					//}
+					//else
+					//{
 						res = "\n";
-					}
+					//}
 				}
 				else
 				{
 					string[] artm = r[0].ToString().Split(new string[] { "\n", "。" }, StringSplitOptions.RemoveEmptyEntries);
 
-					if (artm.Length == 1)
-					{
-						string[] irregularText = new string[] { "No" };
-						if (irregularText.Contains(artm[0]))
-						{
-							res = artm[0] + "。。。。" + "\n";
-						}
-						else
-						{
-							res = artm[0] + "。。。" + "\n";
-						}
-					}
-					else
-					{
-						res = artm.Aggregate((m, n) => m + "。" + n);
-						res = res + "。。。" + "\n";
-					}
+					res = artm.Length == 1 ? ReplaceSpecialText(artm[0]) : artm.Aggregate((m, n) => ReplaceSpecialText(m) + "。" + ReplaceSpecialText(n));
+					res = res + "。。。" + "\n";
 				}
 				sb.Append(res);
 			}
@@ -238,41 +240,51 @@ namespace Anh.TranslateExcel
 		{
 			DataTable dt = new DataTable();
 			dt.Columns.Add("Column1", typeof(string));
-			object[,] arr = range.Value as object[,];
+			dt.Columns.Add("Column2", typeof(string));
+            object[,] arr = range.Value as object[,];
 			if (arr != null)
 			{
-				foreach (var item in arr)
+                for (int k = 1; k <= arr.GetLength(0); k++)
 				{
-					if (item != null)
+
+                    for (int l = 1; l <= arr.GetLength(1); l++)
 					{
-						dt.Rows.Add(item.ToString().TrimStart());
-					}
-					else
-					{
-						dt.Rows.Add("");
-					}
+                        if (arr[k, l] != null && arr[k, l].ToString().Trim().Length > 0)
+						{
+                            dt.Rows.Add(arr[k,l].ToString().Trim(), $"{k},{l}");
+						}
+                    }
 				}
+    //                    foreach (var item in arr)
+				//{
+				//	if (item != null && item.ToString().Trim().Length > 0)
+				//	{
+				//		dt.Rows.Add(item.ToString().Trim(), "");
+				//	}
+				//	//else
+				//	//{
+				//	//	dt.Rows.Add("");
+				//	//}
+				//}
 			}
 			dt.AcceptChanges();
 			return dt;
 		}
 
-		private DataTable GetTableFromText(List<string> orgtex, DataTable orgTa)
+		private DataTable MergeResultIntoTable(List<string> orgtex, DataTable orgTa)
 		{
+			DataTable dt = orgTa.Copy();
+
+            dt.Columns.Add("Column3", typeof(string));
+			
 			if (orgtex == null || orgtex.Count == 0)
 			{
 				return null;
 			}
-			DataTable dt = new DataTable();
-			dt.Columns.Add(orgTa.Columns[0].ColumnName, typeof(string));
-			foreach (DataRow item in orgTa.Rows)
-			{
-				dt.Rows.Add("");
-			}
 			int iLen = Math.Min(orgtex.Count, dt.Rows.Count);
 			for (int i = 0; i < iLen; i++)
 			{
-				dt.Rows[i][0] = orgtex[i];
+				dt.Rows[i][2] = orgtex[i].Replace(" 。 。","");
 			}
 			dt.AcceptChanges();
 			return dt;
